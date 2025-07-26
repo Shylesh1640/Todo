@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agentic AI Roadmap To-Do</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f0f2f0, #e0eafc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      transition: background 0.3s ease;
+    }
+    body.dark {
+      background: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+      color: #fff;
+    }
+    .todo-container {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 600px;
+      transition: background 0.3s, transform 0.3s;
+    }
+    body.dark .todo-container {
+      background: rgba(44, 44, 44, 0.8);
+    }
+    h1 {
+      text-align: center;
+      background: linear-gradient(135deg, #4CAF50, #81c784);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .top-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    input[type="text"], input[type="search"], input[type="number"] {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      outline: none;
+      transition: box-shadow 0.3s;
+    }
+    input[type="text"]:focus, input[type="search"]:focus, input[type="number"]:focus {
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+    }
+    button {
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #4CAF50, #81c784);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+    li {
+      background: rgba(245, 245, 245, 0.8);
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+    li:hover {
+      transform: scale(1.02);
+    }
+    body.dark li {
+      background: rgba(59, 59, 59, 0.8);
+    }
+    .task-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .delete-btn {
+      background: linear-gradient(135deg, crimson, #e74c3c);
+      border: none;
+      padding: 8px 14px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .delete-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    .progress-bar-container {
+      height: 25px;
+      border-radius: 12px;
+      background: #ddd;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(to right, #4CAF50, #81c784);
+      width: 0%;
+      transition: width 0.3s ease;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 25px;
+    }
+    @media (max-width: 500px) {
+      .top-bar {
+        flex-direction: column;
+      }
+      .task-row, .progress-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="todo-container">
+    <h1>📘 Agentic AI To-Do</h1>
+    <div class="top-bar">
+      <a href="javascript:history.back()" style="
+        display: inline-block;
+        background: linear-gradient(135deg, #FF4136, #FF851B);
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-family: 'Segoe UI', sans-serif;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+      ">🔙</a>
+      <input type="text" id="taskInput" placeholder="New Task..." />
+      <button onclick="addTask()">Add</button>
+      <button onclick="toggleDarkMode()">🌙</button>
+    </div>
+    <input type="search" id="searchInput" oninput="filterTasks()" placeholder="Search..." />
+
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="globalProgress">0%</div>
+    </div>
+
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
+    const searchInput = document.getElementById("searchInput");
+    const globalProgress = document.getElementById("globalProgress");
+
+    const defaultTasks = [
+      "📘 Introduction to Generative AI",
+      "🔧 Build Your First Agent (No-code tools)",
+      "💻 Learn Coding for Agentic AI",
+      "🧠 Learn LangChain, Prompt Engineering, and RAGs",
+      "🚀 Build Your First AI Agent with LangGraph, Autogen, CrewAI",
+      "🛠️ Build an AI Agent from Scratch",
+      "🧩 Build ReAct Agents with LangChain",
+      "🏗️ Build Agentic RAG Systems with LangGraph",
+      "📚 Practical Case-Studies using LangGraph, Autogen, CrewAI",
+      "📐 Learn Agentic AI Architectures & Design Patterns",
+      "⚙️ Build Advanced AI Agents with LangGraph, Autogen, CrewAI",
+      "🕸️ Multi-agent coordination, communication, and planning",
+      "🎯 Enroll in Agentic AI Pioneer Program",
+      "📂 Download course handouts (LLMOps, RLHF, Stable Diffusion)",
+      "🎥 Watch Responsible AI & Computer Vision videos",
+      "🧪 Explore Finetuning, Training LLMs from Scratch",
+      "📈 Learn Successful AI Strategies (CEO perspective)",
+      "🗂️ Review business use cases from Generative AI"
+    ];
+
+    window.onload = () => {
+      if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
+      let savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      if (savedTasks.length === 0) {
+        savedTasks = defaultTasks.map(text => ({ text, completed: false, progress: 0 }));
+        localStorage.setItem("tasks", JSON.stringify(savedTasks));
+      }
+      savedTasks.forEach(task => addTaskToUI(task));
+      updateGlobalProgress();
+    };
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (!text) return;
+      const task = { text, completed: false, progress: 0 };
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks.push(task);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      addTaskToUI(task);
+      updateGlobalProgress();
+      taskInput.value = "";
+    }
+
+    function addTaskToUI(task) {
+      const li = document.createElement("li");
+
+      const row = document.createElement("div");
+      row.className = "task-row";
+
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = task.completed;
+
+      if (task.completed) label.classList.add("completed");
+
+      checkbox.onchange = () => {
+        task.completed = checkbox.checked;
+        label.classList.toggle("completed");
+        saveTaskProgress(task.text, task.completed, task.progress);
+        updateGlobalProgress();
+      };
+
+      label.appendChild(checkbox);
+      label.append(" " + task.text);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => {
+        li.remove();
+        deleteTask(task.text);
+        updateGlobalProgress();
+      };
+
+      row.append(label, delBtn);
+
+      const progressRow = document.createElement("div");
+      progressRow.className = "progress-row";
+
+      const progressInput = document.createElement("input");
+      progressInput.type = "number";
+      progressInput.min = "0";
+      progressInput.max = "100";
+      progressInput.value = task.progress;
+      progressInput.style.width = "70px";
+
+      progressInput.oninput = () => {
+        task.progress = Math.min(100, Math.max(0, parseInt(progressInput.value)));
+        saveTaskProgress(task.text, task.completed, task.progress);
+        updateGlobalProgress();
+      };
+
+      const percentLabel = document.createElement("span");
+      percentLabel.textContent = "% done";
+
+      progressRow.append(progressInput, percentLabel);
+
+      li.append(row, progressRow);
+      taskList.appendChild(li);
+    }
+
+    function saveTaskProgress(text, completed, progress) {
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks = tasks.map(t => t.text === text ? { text, completed, progress } : t);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function deleteTask(text) {
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      tasks = tasks.filter(t => t.text !== text);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function updateGlobalProgress() {
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      const total = tasks.length;
+      const sum = tasks.reduce((acc, t) => acc + (parseInt(t.progress) || 0), 0);
+      const avg = total === 0 ? 0 : Math.round(sum / total);
+      globalProgress.style.width = avg + "%";
+      globalProgress.textContent = avg + "%";
+    }
+
+    function filterTasks() {
+      const keyword = searchInput.value.toLowerCase();
+      Array.from(taskList.children).forEach(li => {
+        li.style.display = li.innerText.toLowerCase().includes(keyword) ? "" : "none";
+      });
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+    }
+  </script>
+</body>
+</html>
